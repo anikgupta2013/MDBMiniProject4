@@ -10,4 +10,8 @@ import Foundation
 
 class Flight {
     //FIXME
+    var number: String!
+    init(number: String){
+        self.number = number
+    }
 }

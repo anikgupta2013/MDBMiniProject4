@@ -54,7 +54,7 @@ class LufthansaAPIClient {
         //print("\n")
         
         //GET RID OF THIS
-        completion(Flight())
+        completion(Flight(number: "dfasf"))
         
         /*Alamofire.request(requestURL, headers: parameters).responseJSON { response in
          //Makes sure that response is valid

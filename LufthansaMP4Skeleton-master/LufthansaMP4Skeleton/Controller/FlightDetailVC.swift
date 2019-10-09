@@ -10,13 +10,29 @@ import UIKit
 
 class FlightDetailVC: UIViewController {
     var flight: Flight!
+    @IBOutlet weak var bar: UINavigationItem!
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
+        setUI()
     }
     
-
+    @objc func handleToggleBT(sender: UIButton) {
+        var favorites = [] as! [String]
+        if UserDefaults.standard.array(forKey: "favorites") != nil{
+            favorites = UserDefaults.standard.array(forKey: "favorites") as! [String]
+            
+        }
+        if sender.isSelected {
+            favorites.remove(at: favorites.index(of: flight.number)!) // FLIGHT NUMBER MAY NOT BE BEST IDENTIFIER
+        }
+        else {
+            favorites.append(flight.number) // FLIGHT NUMBER MAY NOT BE BEST IDENTIFIER
+        }
+        
+        UserDefaults.standard.set(favorites, forKey: "favorites")
+        sender.isSelected = !sender.isSelected
+        
+    }
     /*
     // MARK: - Navigation
 

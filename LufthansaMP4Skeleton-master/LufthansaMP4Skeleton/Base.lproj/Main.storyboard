@@ -211,7 +211,9 @@
                                 <rect key="frame" x="0.0" y="0.0" width="414" height="56"/>
                                 <items>
                                     <navigationItem title="Flight Number: " id="tio-MD-abZ">
-                                        <barButtonItem key="rightBarButtonItem" title="Item" image="star" catalog="system" id="LlF-Yh-aCi"/>
+                                        <barButtonItem key="rightBarButtonItem" title="Item" image="star" catalog="system" id="LlF-Yh-aCi">
+                                            <color key="tintColor" red="0.99778193240000002" green="0.85945361850000002" blue="0.2271939218" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                                        </barButtonItem>
                                     </navigationItem>
                                 </items>
                             </navigationBar>
@@ -332,6 +334,9 @@
                         <viewLayoutGuide key="safeArea" id="Bmt-Fr-iDx"/>
                     </view>
                     <navigationItem key="navigationItem" id="hhP-Hc-Y8c"/>
+                    <connections>
+                        <outlet property="bar" destination="tio-MD-abZ" id="puC-kz-MJf"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Nja-Dk-jei" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
