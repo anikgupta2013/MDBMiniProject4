@@ -28,6 +28,7 @@ extension FlightDetailVC{
         guard let favorites = UserDefaults.standard.array(forKey: "favorites") else{
             return
         }
-        star.isSelected = (favorites as! [String]).contains(flight.number) // FLIGHT NUMBER MAY NOT BE BEST IDENTIFIER
+        star.isSelected = (favorites as! [String]).contains(flight.flightNumber! + " " + date) // FLIGHT NUMBER MAY NOT BE BEST IDENTIFIER
+        print(favorites)
     }
 }

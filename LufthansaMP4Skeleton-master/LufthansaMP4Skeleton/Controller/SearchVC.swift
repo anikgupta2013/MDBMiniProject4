@@ -18,6 +18,7 @@ class SearchVC: UIViewController {
     @IBOutlet weak var datePicker: UIDatePicker!
     @IBOutlet weak var button: UIButton!
     
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -51,27 +52,54 @@ class SearchVC: UIViewController {
     }
     
     @objc func buttonPress(_ sender: Any) {
-        
+        button.isEnabled = false
         //Gets new auth token and then gets flight status once that is successful
         guard textField.text != "" else{
             self.displayAlert(title: "No Flight Number", message: "Please include a flight number.")
+            button.isEnabled = true
             return
         }
-        
+        self.animateImage()
         // TODO make sure date format is correct
         LufthansaAPIClient.getAuthToken() {
-            LufthansaAPIClient.getFlightStatus(flightNum: self.textField.text!, date: self.datePicker.date.description) { flt in
+            LufthansaAPIClient.getFlightStatus(flightNum: self.textField.text!, date: self.datePicker.date.description.components(separatedBy: " ")[0]) { flt in
                 /*self.label.text = "fix the thing you dummy"*/
-                self.animateImage()
-                
-                guard flt != nil else{
+                //self.animateImage()
+                //print(flt.actualArrival)
+                /*guard flt != nil else{
                     self.displayAlert(title: "No Flight Exists", message: "No flights with this number and date exist.")
                     return
+                }*/
+                /*if flt.isError(){
+                    self.displayAlert(title: "No Flight Exists", message: "No flights with this number and date exist.")
                 }
+                else {*/
+               
                 self.flight = flt
-                self.performSegue(withIdentifier: "searchToDetail", sender: self)
+                
+                print(self.flight)
+                if(!flt.isError()){
+                    print("a")
+                    DispatchQueue.main.async {
+                        self.performSegue(withIdentifier: "searchToDetail", sender: self)
+                        self.button.isEnabled = true
+                    }
+                }
+                else{
+                    print("b")
+                    DispatchQueue.main.async {
+                        self.displayAlert(title: "No Flight Exists", message: "No flights with this number and date exist.")
+                        self.button.isEnabled = true
+                    }
+                }
+                
+               // }
+                
             }
         }
+        /*self.displayAlert(title: "No Flight Number", message: "Please include a flight number.")
+        return*/
+        
     }
     func displayAlert(title: String, message: String) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
@@ -84,6 +112,7 @@ class SearchVC: UIViewController {
         if segue.identifier == "searchToDetail" {
             let controller = segue.destination as! FlightDetailVC
             controller.flight = flight
+            controller.date = datePicker.date.description.components(separatedBy: " ")[0]
         }
     }
 }
