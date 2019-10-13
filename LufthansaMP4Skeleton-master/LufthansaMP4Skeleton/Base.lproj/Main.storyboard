@@ -58,7 +58,7 @@
         <!--Airports-->
         <scene sceneID="dQt-vh-bZv">
             <objects>
-                <viewController id="GBe-r6-7Lv" sceneMemberID="viewController">
+                <viewController id="GBe-r6-7Lv" customClass="MapVC" customModule="LufthansaMP4Skeleton" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="1nZ-3d-JPz">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -66,6 +66,10 @@
                             <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="dTY-GM-Hdn">
                                 <rect key="frame" x="0.0" y="44" width="414" height="769"/>
                             </mapView>
+                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" style="medium" translatesAutoresizingMaskIntoConstraints="NO" id="FBx-sT-2cN">
+                                <rect key="frame" x="197" y="418" width="20" height="20"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            </activityIndicatorView>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <constraints>
@@ -79,36 +83,41 @@
                     <tabBarItem key="tabBarItem" title="Airports" image="airport_icon" id="QKe-wE-ayS">
                         <inset key="imageInsets" minX="0.0" minY="35" maxX="0.0" maxY="30"/>
                     </tabBarItem>
+                    <connections>
+                        <outlet property="activityIndicator" destination="FBx-sT-2cN" id="BgP-ck-apj"/>
+                        <outlet property="map" destination="dTY-GM-Hdn" id="Mly-8u-sDq"/>
+                        <segue destination="B1c-4R-U6y" kind="show" identifier="mapToAirport" id="7HP-JW-Qg4"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ieQ-w4-5oH" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="296" y="541"/>
         </scene>
-        <!--Airport InfoVC-->
+        <!--AirportVC-->
         <scene sceneID="0Zm-yS-eBV">
             <objects>
-                <viewController id="B1c-4R-U6y" customClass="AirportInfoVC" sceneMemberID="viewController">
+                <viewController id="B1c-4R-U6y" customClass="AirportVC" customModule="LufthansaMP4Skeleton" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="TjA-qA-eBp">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="842"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <navigationBar contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="iEo-HE-o0d">
-                                <rect key="frame" x="0.0" y="44" width="414" height="44"/>
+                                <rect key="frame" x="0.0" y="0.0" width="414" height="56"/>
                                 <items>
                                     <navigationItem title="Airport Name" id="KLf-2L-6xQ"/>
                                 </items>
                             </navigationBar>
                             <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="9yv-gx-BCu">
-                                <rect key="frame" x="0.0" y="88" width="414" height="256"/>
+                                <rect key="frame" x="0.0" y="56" width="414" height="256"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="256" id="xLS-8t-RF4"/>
                                 </constraints>
                             </mapView>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="ZQE-q2-h4i">
-                                <rect key="frame" x="0.0" y="395" width="414" height="467"/>
+                                <rect key="frame" x="0.0" y="363" width="414" height="445"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="7bH-pP-cHv">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="tableCell" id="7bH-pP-cHv">
                                         <rect key="frame" x="0.0" y="28" width="414" height="43.5"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="7bH-pP-cHv" id="q0v-GD-WIH">
@@ -119,11 +128,14 @@
                                 </prototypes>
                             </tableView>
                             <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="Ydv-qK-O3p">
-                                <rect key="frame" x="118.5" y="354" width="177" height="32"/>
+                                <rect key="frame" x="118.5" y="322" width="177" height="32"/>
                                 <segments>
                                     <segment title="Arrivals"/>
                                     <segment title="Departures"/>
                                 </segments>
+                                <connections>
+                                    <action selector="controlPressed:" destination="B1c-4R-U6y" eventType="valueChanged" id="Q4g-9K-KEc"/>
+                                </connections>
                             </segmentedControl>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
@@ -145,10 +157,17 @@
                         <viewLayoutGuide key="safeArea" id="u28-b4-ggi"/>
                     </view>
                     <navigationItem key="navigationItem" id="EpL-zP-hbV"/>
+                    <connections>
+                        <outlet property="map" destination="9yv-gx-BCu" id="rJt-Yx-8sx"/>
+                        <outlet property="navBar" destination="KLf-2L-6xQ" id="mj4-aL-eMD"/>
+                        <outlet property="segmentedControl" destination="Ydv-qK-O3p" id="5uu-1s-ybK"/>
+                        <outlet property="tableView" destination="ZQE-q2-h4i" id="HxS-yF-XbD"/>
+                        <segue destination="Ipi-jU-PVO" kind="show" identifier="airportToDetail" id="x8G-AA-VYW"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ncc-Ga-QJy" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1054" y="547"/>
+            <point key="canvasLocation" x="1054" y="613"/>
         </scene>
         <!--Flight Status-->
         <scene sceneID="lsT-IG-KOJ">
@@ -358,6 +377,7 @@
                         <outlet property="scheduleArrivalLabel" destination="5lf-cs-Eh5" id="Z1F-OZ-rLN"/>
                         <outlet property="scheduleDepartureLabel" destination="hu8-VN-alA" id="Nox-lc-8yl"/>
                         <outlet property="statusLabel" destination="VSy-Sl-a8x" id="sCz-Fy-DyI"/>
+                        <segue destination="B1c-4R-U6y" kind="show" identifier="detailToAirport" id="4tT-1m-RCF"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Nja-Dk-jei" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -393,6 +413,7 @@
         <image name="star.fill" catalog="system" width="64" height="58"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="vl6-Bc-Ljj"/>
+        <segue reference="x8G-AA-VYW"/>
+        <segue reference="4tT-1m-RCF"/>
     </inferredMetricsTieBreakers>
 </document>

@@ -42,13 +42,14 @@ class LufthansaAPIClient {
          completion()
          }*/
     }
-    static func getAirport(code: String, completion: @escaping (CLLocationCoordinate2D) -> ()){
+    
+    static func getAirports(offset: String, completion: @escaping ([Airport]) -> ()){
         let requestURL = "" //FIXME
         let parameters: HTTPHeaders = ["":""] //FIXME
-        print(code)
+        //print(code)
         let headers = [
           "Accept": "application/json",
-          "Authorization": "Bearer jcyxn87urfknnkuykp2cmxwy",
+          "Authorization": "Bearer 2rfud7zcde9btv59fcbytxjg",
           "User-Agent": "PostmanRuntime/7.17.1",
           "Cache-Control": "no-cache",
           "Postman-Token": "a5f495a3-e6e0-4586-aba3-6f575fe20e49,127ad9dd-cab2-4760-91c2-c9668462b37d",
@@ -58,7 +59,121 @@ class LufthansaAPIClient {
           "cache-control": "no-cache"
         ]
 
-        let request = NSMutableURLRequest(url: NSURL(string: "https://api.lufthansa.com/v1/mds-references/airports/\(code)?limit=1&offset=0&LHoperated=0?")! as URL,
+        let request = NSMutableURLRequest(url: NSURL(string: "https://api.lufthansa.com/v1/mds-references/airports/?limit=100&offset=\(offset)&LHoperated=1")! as URL,
+                                                cachePolicy: .useProtocolCachePolicy,
+                                            timeoutInterval: 10.0)
+        request.httpMethod = "GET"
+        request.allHTTPHeaderFields = headers
+        var airports : [Airport]
+        airports = []
+        let session = URLSession.shared
+        let dataTask = session.dataTask(with: request as URLRequest, completionHandler: { (data, response, error) -> Void in
+            if (error != nil) {
+                print(error)
+            } else {
+                let httpResponse = response as? HTTPURLResponse
+                //print(httpResponse)
+                guard let flightdata = data else{
+                    return
+                }
+                do {
+                    guard let jsonObject = try? JSONSerialization.jsonObject(with: flightdata, options: []) else {
+                        print("Can't convert to JSON object")
+                        return
+                    }
+                    guard let jsonDict = jsonObject as? [String: Any] else {
+                        print("We can't cast to dictionary")
+                        return
+                    }
+                    //print(jsonDict)
+                    guard let flightstatusresource = jsonDict["AirportResource"] as? [String: Any] else{
+                        print("There is bob error")
+                        return
+                    }
+                    guard let flights = flightstatusresource["Airports"] as? [String: Any] else{
+                        print("There is 2 error")
+                        return
+                    }
+                    guard let flightDict = flights["Airport"] as? [[String: Any]] else{
+                        print("There is 3 error")
+                        return
+                    }
+                    
+                    for airport in flightDict {
+                        guard let code = airport["AirportCode"] as? String else {
+                            print("There is name error")
+                            continue
+                        }
+                        guard let position = airport["Position"] as? [String: Any] else{
+                            print("There is 4 error")
+                            continue
+                        }
+                        guard let coordinate = position["Coordinate"] as? [String: Any] else{
+                            print("There is 5 error")
+                            continue
+                        }
+                        guard let latitude = coordinate["Latitude"] as? Double else{
+                            print("There is 6 error")
+                            continue
+                        }
+                        guard let longitude = coordinate["Longitude"] as? Double else{
+                            print("There is 7 error")
+                            continue
+                        }
+                        
+                        /*"Names": {
+                        "Name": {
+                            "@LanguageCode": "EN",
+                            "$": "Adado"
+                        }*/
+                        guard let names = airport["Names"] as? [String: Any] else {
+                            continue
+                        }
+                        guard let name = names["Name"] as? [[String: Any]] else {
+                            continue
+                        }
+                        var airportName = name[0]["$"] as? String
+                        for airName in name {
+                            guard let lang = airName["@LanguageCode"] as? String else{
+                                continue
+                            }
+                            if lang == "EN" {
+                                guard let n = airName["$"] as? String else {
+                                    continue
+                                }
+                                airportName = n
+                            }
+                        }
+                        
+                        airports.append(Airport(location: CLLocationCoordinate2D(latitude: CLLocationDegrees(exactly: latitude)!, longitude: CLLocationDegrees(exactly: longitude)!), code: code, name: airportName!))
+                        
+                    }
+                    
+                    completion(airports)
+                } catch let error {
+                    print(error)
+                }
+            }
+        })
+        dataTask.resume()
+    }
+    static func getAirport(code: String, completion: @escaping (Airport) -> ()){
+        let requestURL = "" //FIXME
+        let parameters: HTTPHeaders = ["":""] //FIXME
+        print(code)
+        let headers = [
+          "Accept": "application/json",
+          "Authorization": "Bearer 2rfud7zcde9btv59fcbytxjg",
+          "User-Agent": "PostmanRuntime/7.17.1",
+          "Cache-Control": "no-cache",
+          "Postman-Token": "a5f495a3-e6e0-4586-aba3-6f575fe20e49,127ad9dd-cab2-4760-91c2-c9668462b37d",
+          "Host": "api.lufthansa.com",
+          "Accept-Encoding": "gzip, deflate",
+          "Connection": "keep-alive",
+          "cache-control": "no-cache"
+        ]
+
+        let request = NSMutableURLRequest(url: NSURL(string: "https://api.lufthansa.com/v1/mds-references/airports/\(code)?limit=1&offset=0&LHoperated=1?")! as URL,
                                                 cachePolicy: .useProtocolCachePolicy,
                                             timeoutInterval: 10.0)
         request.httpMethod = "GET"
@@ -112,7 +227,26 @@ class LufthansaAPIClient {
                         print("There is 7 error")
                         return
                     }
-                    completion(CLLocationCoordinate2D(latitude: CLLocationDegrees(exactly: latitude)!, longitude: CLLocationDegrees(exactly: longitude)!))
+                    
+                    guard let names = flightDict["Names"] as? [String: Any] else {
+                        return
+                    }
+                    guard let name = names["Name"] as? [[String: Any]] else {
+                        return
+                    }
+                    var airportName = name[0]["$"] as? String
+                    for airName in name {
+                        guard let lang = airName["@LanguageCode"] as? String else{
+                            continue
+                        }
+                        if lang == "EN" {
+                            guard let n = airName["$"] as? String else {
+                                continue
+                            }
+                            airportName = n
+                        }
+                    }
+                    completion(Airport(location: CLLocationCoordinate2D(latitude: CLLocationDegrees(exactly: latitude)!, longitude: CLLocationDegrees(exactly: longitude)!), code: code, name: airportName!))
                 } catch let error {
                     print(error)
                 }
@@ -122,13 +256,122 @@ class LufthansaAPIClient {
     }
     
     
+    static func getFlights(arrivals_departures: String, code: String, date: String, completion: @escaping ([Flight]) -> ()){
+        let requestURL = "" //FIXME
+        let parameters: HTTPHeaders = ["":""] //FIXME
+        //print(code)
+        let headers = [
+          "Accept": "application/json",
+          "Authorization": "Bearer 2rfud7zcde9btv59fcbytxjg",
+          "User-Agent": "PostmanRuntime/7.17.1",
+          "Cache-Control": "no-cache",
+          "Postman-Token": "a5f495a3-e6e0-4586-aba3-6f575fe20e49,127ad9dd-cab2-4760-91c2-c9668462b37d",
+          "Host": "api.lufthansa.com",
+          "Accept-Encoding": "gzip, deflate",
+          "Connection": "keep-alive",
+          "cache-control": "no-cache"
+        ]
+
+        let request = NSMutableURLRequest(url: NSURL(string: "https://api.lufthansa.com/v1/operations/flightstatus/\(arrivals_departures)/\(code)/\(date)?limit=100")! as URL,
+                                                cachePolicy: .useProtocolCachePolicy,
+                                            timeoutInterval: 10.0)
+        print("https://api.lufthansa.com/v1/operations/flightstatus/\(arrivals_departures)/\(code)/\(date)?limit=100")
+        request.httpMethod = "GET"
+        request.allHTTPHeaderFields = headers
+        var airplanes : [Flight]
+        airplanes = []
+        let session = URLSession.shared
+        let dataTask = session.dataTask(with: request as URLRequest, completionHandler: { (data, response, error) -> Void in
+            if (error != nil) {
+                print(error)
+            } else {
+                let httpResponse = response as? HTTPURLResponse
+                //print(httpResponse)
+                guard let flightdata = data else{
+                    return
+                }
+                do {
+                    guard let jsonObject = try? JSONSerialization.jsonObject(with: flightdata, options: []) else {
+                        print("Can't convert to JSON object")
+                        return
+                    }
+                    guard let jsonDict = jsonObject as? [String: Any] else {
+                        print("We can't cast to dictionary")
+                        return
+                    }
+                    //print(jsonDict)
+                    //print(date)
+                    guard let flightstatusresource = jsonDict["FlightStatusResource"] as? [String: Any] else{
+                        print("There is bob error")
+                        return
+                    }
+                    guard let flights = flightstatusresource["Flights"] as? [String: Any] else{
+                        print("There is 2 error")
+                        return
+                    }
+                    guard let flightDict = flights["Flight"] as? [[String: Any]] else{
+                        print("There is 3 error")
+                        return
+                    }
+                    
+                    for flight in flightDict {
+                        //print(flight["Departure"])
+                        /*guard let code = airport["AirportCode"] as? String else {
+                            print("There is name error")
+                            continue
+                        }
+                        guard let position = airport["Position"] as? [String: Any] else{
+                            print("There is 4 error")
+                            continue
+                        }
+                        guard let coordinate = position["Coordinate"] as? [String: Any] else{
+                            print("There is 5 error")
+                            continue
+                        }
+                        guard let latitude = coordinate["Latitude"] as? Double else{
+                            print("There is 6 error")
+                            continue
+                        }
+                        guard let longitude = coordinate["Longitude"] as? Double else{
+                            print("There is 7 error")
+                            continue
+                        }
+                        
+                        /*"Names": {
+                        "Name": {
+                            "@LanguageCode": "EN",
+                            "$": "Adado"
+                        }*/
+                        guard let names = airport["Names"] as? [String: Any] else {
+                            continue
+                        }
+                        guard let name = names["Name"] as? [[String: Any]] else {
+                            continue
+                        }
+                        guard let airportName = name[0]["$"] as? String else {
+                            continue
+                        }
+                        airports.append(Airport(location: CLLocationCoordinate2D(latitude: CLLocationDegrees(exactly: latitude)!, longitude: CLLocationDegrees(exactly: longitude)!), code: code, name: airportName))*/
+                        airplanes.append(Flight(flightDict: flight))
+                        
+                    }
+                    
+                    completion(airplanes)
+                } catch let error {
+                    print(error)
+                }
+            }
+        })
+        dataTask.resume()
+    }
+    
     static func getAircraft(code: String, completion: @escaping (String) -> ()){
         let requestURL = "" //FIXME
         let parameters: HTTPHeaders = ["":""] //FIXME
             
         let headers = [
           "Accept": "application/json",
-          "Authorization": "Bearer jcyxn87urfknnkuykp2cmxwy",
+          "Authorization": "Bearer 2rfud7zcde9btv59fcbytxjg",
           "User-Agent": "PostmanRuntime/7.17.1",
           "Cache-Control": "no-cache",
           "Postman-Token": "a5f495a3-e6e0-4586-aba3-6f575fe20e49,127ad9dd-cab2-4760-91c2-c9668462b37d",
@@ -215,7 +458,7 @@ class LufthansaAPIClient {
         
         let headers = [
           "Accept": "application/json",
-          "Authorization": "Bearer jcyxn87urfknnkuykp2cmxwy",
+          "Authorization": "Bearer 2rfud7zcde9btv59fcbytxjg",
           "User-Agent": "PostmanRuntime/7.17.1",
           "Cache-Control": "no-cache",
           "Postman-Token": "a5f495a3-e6e0-4586-aba3-6f575fe20e49,127ad9dd-cab2-4760-91c2-c9668462b37d",

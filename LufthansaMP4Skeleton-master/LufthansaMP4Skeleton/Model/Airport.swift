@@ -12,9 +12,10 @@ import MapKit
 class Airport: NSObject, MKAnnotation {
     var coordinate: CLLocationCoordinate2D
     var title: String?
-    
-    init(location: CLLocationCoordinate2D, code: String) {
+    var subtitle: String?
+    init(location: CLLocationCoordinate2D, code: String, name: String) {
         title = code
         coordinate = location
+        subtitle = name
     }
 }

@@ -1,15 +1,15 @@
 //
-//  FlightDetailVC - map.swift
+//  AirportVC - map.swift
 //  LufthansaMP4Skeleton
 //
-//  Created by Anik Gupta on 10/11/19.
+//  Created by Anik Gupta on 10/12/19.
 //  Copyright © 2019 ___MaxAMiranda___. All rights reserved.
 //
 
 import Foundation
 import MapKit
 
-extension FlightDetailVC: MKMapViewDelegate {
+extension AirportVC: MKMapViewDelegate {
     func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
         print("In MKMapViewDelegate")
         guard let annotation = annotation as? Airport else {
@@ -26,29 +26,19 @@ extension FlightDetailVC: MKMapViewDelegate {
             view = MKMarkerAnnotationView(annotation: annotation, reuseIdentifier: identifier)
             view.canShowCallout = true
             view.calloutOffset = CGPoint(x: -5, y: 5)
-            view.rightCalloutAccessoryView = UIButton(type: .detailDisclosure)
+            /*let detailButton = UIButton(type: .detailDisclosure)
+            view.rightCalloutAccessoryView = detailButton as! UIView*/
         }
         
         return view
 
     }
-    func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
-        if overlay is MKPolyline {
-            let renderer = MKPolylineRenderer(overlay: overlay)
-            renderer.strokeColor = UIColor.red
-            renderer.lineWidth = 3
-            return renderer
-        }
-        
-        return MKOverlayRenderer()
-    }
-    
-    func mapView(_ mapView: MKMapView, annotationView view: MKAnnotationView, calloutAccessoryControlTapped control: UIControl) {
+    /*func mapView(_ mapView: MKMapView, annotationView view: MKAnnotationView, calloutAccessoryControlTapped control: UIControl) {
         
         if control == view.rightCalloutAccessoryView {
             //selectedAirport = control.
         //}
-            performSegue(withIdentifier: "detailToAirport", sender: view)
+            performSegue(withIdentifier: "mapToAirport", sender: view)
         }
     }
     /*func mapView(mapView: MKMapView, annotationView view: MKAnnotationView, calloutAccessoryControlTapped control: UIControl) {
@@ -58,7 +48,7 @@ extension FlightDetailVC: MKMapViewDelegate {
     }*/
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if (segue.identifier == "detailToAirport" )
+        if (segue.identifier == "mapToAirport" )
         {
             print("working")
             var controller = segue.destination as! AirportVC
@@ -66,5 +56,5 @@ extension FlightDetailVC: MKMapViewDelegate {
             //ikinciEkran.tekelName = (sender as! MKAnnotationView).annotation!.title
 
         }
-    }
+    }*/
 }

@@ -43,7 +43,9 @@ class Flight {
             }
             if let terminal = departure["Terminal"] as? [String: Any]{
                 //print(terminal["Name"] as! Int)
-                terminalDeparture = "\(terminal["Name"]!)"
+                if let termName = terminal["Name"] {
+                    terminalDeparture = "\(termName)"
+                }
                 gateDeparture = terminal["Gate"] as? String
             }
         }
@@ -57,7 +59,9 @@ class Flight {
                 actualArrival = dateFormatter.date(from:dateActual["DateTime"] as! String)!
             }
             if let terminal = arrival["Terminal"] as? [String: Any]{
-                terminalArrival = "\(terminal["Name"]!)"
+                if let termName = terminal["Name"] {
+                    terminalDeparture = "\(termName)"
+                }
                 
                 gateArrival = terminal["Gate"] as? String
             }

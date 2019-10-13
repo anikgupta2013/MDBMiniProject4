@@ -35,7 +35,7 @@ class FlightDetailVC: UIViewController {
         setUI()
         initialize()
         map.delegate = self
-        
+
         locationManager = CLLocationManager()
         locationManager.delegate = self
         locationManager.requestWhenInUseAuthorization()
@@ -150,13 +150,14 @@ class FlightDetailVC: UIViewController {
         
         if flight.departureAirport != nil{
             LufthansaAPIClient.getAirport(code: flight.departureAirport!){(begin) in
-                let start = Airport(location: begin, code: self.flight.departureAirport!)
+                //let start = Airport(location: begin, code: self.flight.departureAirport!)
+                //print(begin)
                 if self.flight.arrivalAirport != nil{
                     print("Good 1")
                     LufthansaAPIClient.getAirport(code: self.flight.arrivalAirport!){(fin) in
                         print("Good 2")
-                        let end = Airport(location: fin, code: self.flight.arrivalAirport!)
-                        let places = [start, end]
+                        //let end = Airport(location: fin, code: self.flight.arrivalAirport!)
+                        let places = [begin, fin]
                         print("Good 3")
                         self.map.addAnnotations(places)
                         //var locations = places.map { $0.coordinate }
