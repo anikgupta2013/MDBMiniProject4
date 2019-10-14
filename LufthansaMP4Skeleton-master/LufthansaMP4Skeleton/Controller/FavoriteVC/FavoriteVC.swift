@@ -13,6 +13,7 @@ class FavoriteVC: UIViewController {
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     @IBOutlet weak var tableView: UITableView!
     var selectedFlight : Flight!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         flights = []
@@ -82,6 +83,7 @@ class FavoriteVC: UIViewController {
         if segue.identifier == "favoritesToDetail" {
             let controller =  segue.destination as! FlightDetailVC
             controller.flight = selectedFlight
+            controller.favs = self
             let favorites = UserDefaults.standard.array(forKey: "favorites") as! [String]
             for fav in favorites{
                 let code = fav.components(separatedBy: " ")[0]

@@ -30,6 +30,8 @@ class FlightDetailVC: UIViewController {
     
     var location: CLLocationCoordinate2D!
     var locationManager: CLLocationManager!
+    
+    var favs : FavoriteVC?
     override func viewDidLoad() {
         super.viewDidLoad()
         setUI()
@@ -45,7 +47,9 @@ class FlightDetailVC: UIViewController {
         }
         createAirports()
     }
-    
+    //override func viewWillDisappear(_ animated: Bool) {
+        
+    //}
     func initialize(){
         let dateFormatterPrint = DateFormatter()
         dateFormatterPrint.dateFormat = "MMM dd h:mm a"
@@ -137,6 +141,9 @@ class FlightDetailVC: UIViewController {
         
         UserDefaults.standard.set(favorites, forKey: "favorites")
         sender.isSelected = !sender.isSelected
+        if favs != nil{
+            favs!.updateTable()
+        }
         
     }
     
